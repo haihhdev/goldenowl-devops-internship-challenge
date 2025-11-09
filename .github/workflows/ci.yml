@@ -66,8 +66,8 @@ jobs:
         with:
           context: ./src
           push: true
-          tags: >
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }},
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Image digest
