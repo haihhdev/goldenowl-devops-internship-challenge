@@ -39,7 +39,7 @@ jobs:
       - name: Run tests
         run: npm test
 
-  docker:
+    docker:
     needs: build-and-test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
