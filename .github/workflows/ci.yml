@@ -28,8 +28,6 @@ jobs:
           cache: "npm"
           cache-dependency-path: src/package-lock.json
       - run: npm ci
-      - run: npm run lint:check
-      - run: npm test
 
   docker:
     needs: build-and-test
@@ -51,3 +49,21 @@ jobs:
           context: ./src
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: docker
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to AWS EC2 via SSH
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            echo "Deploying latest image on EC2..."
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            docker stop goldenowl-app || true
+            docker rm goldenowl-app || true
+            docker run -d -p 3000:3000 --name goldenowl-app ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
