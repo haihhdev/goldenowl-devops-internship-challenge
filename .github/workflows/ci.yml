@@ -65,7 +65,9 @@ jobs:
         with:
           context: ./src
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Image digest
         run: echo "Image pushed with SHA: ${{ github.sha }}"
